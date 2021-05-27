@@ -1,18 +1,34 @@
 <template>
-  <div class="home">
-    <img alt="Vue logo" src="../assets/logo.png" />
-    <HelloWorld msg="Welcome to Your Vue.js + TypeScript App" />
+  <div class="all-news-list">
+    <span class="header-text">All News</span>
+    <div class="mt-4"><top-news /></div>
   </div>
 </template>
 
 <script lang="ts">
-import { Component, Vue } from "vue-property-decorator";
-import HelloWorld from "@/components/HelloWorld.vue"; // @ is an alias to /src
+import { Vue, Component } from "vue-property-decorator";
+import TopNews from "@/components/TopNews.vue";
 
 @Component({
   components: {
-    HelloWorld,
+    TopNews,
   },
 })
 export default class Home extends Vue {}
 </script>
+
+<style lang="scss">
+.all-news-list {
+  margin-top: 4rem;
+  padding: 0rem 1.5rem;
+  @media screen and (max-width: 768px) {
+    padding: 0rem 1.1rem;
+  }
+  .header-text {
+    padding-bottom: 0.5rem;
+    font-size: 1.5rem;
+    font-weight: bold;
+    border-bottom: 2px solid red;
+  }
+}
+</style>
