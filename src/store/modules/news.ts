@@ -33,7 +33,6 @@ class News extends VuexModule {
   }
 
   get topNewsList(): any {
-    console.log(this.topNews);
     return this.topNews;
   }
 }

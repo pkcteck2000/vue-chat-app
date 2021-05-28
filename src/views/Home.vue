@@ -19,7 +19,7 @@ export default class Home extends Vue {}
 
 <style lang="scss">
 .all-news-list {
-  margin-top: 4rem;
+  margin-top: 5rem;
   padding: 0rem 1.5rem;
   @media screen and (max-width: 768px) {
     padding: 0rem 1.1rem;
