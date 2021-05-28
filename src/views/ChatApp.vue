@@ -8,7 +8,7 @@
     <section>
       <main>
         <div
-          v-for="(msg, index) in messages"
+          v-for="(msg, index) in allMessages"
           v-bind:key="'index-' + index"
           :class="['message', sentOrReceived(msg.userUID)]"
         >
@@ -25,7 +25,9 @@
           type="text"
           placeholder="Enter your message!"
         />
-        <button :disabled="!message" type="submit">📩</button>
+        <button :disabled="!message" type="submit">
+          <i class="fa fa-send"></i>
+        </button>
       </form>
     </section>
   </div>
@@ -39,7 +41,7 @@ export default class ChatApp extends Vue {
   user = firebase.auth().currentUser;
   message = "";
   db = firebase.firestore();
-  messages: any = [];
+  allMessages: any = [];
 
   logout(): void {
     firebase.auth().signOut();
@@ -57,16 +59,16 @@ export default class ChatApp extends Vue {
       text: this.message,
       createdAt: Date.now(),
     };
-    await this.db.collection("messages").add(messageInfo);
+    await this.db.collection("chats").add(messageInfo);
     this.message = "";
   }
 
   created() {
     this.db
-      .collection("messages")
+      .collection("chats")
       .orderBy("createdAt")
       .onSnapshot((querySnap) => {
-        this.messages = querySnap.docs.map((doc) => doc.data());
+        this.allMessages = querySnap.docs.map((doc) => doc.data());
       });
   }
 }
