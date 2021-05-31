@@ -124,7 +124,7 @@ export default class NavBar extends Vue {
     padding: 0.5rem 2.2rem !important;
     display: flex;
     @media screen and (max-width: 768px) {
-      padding: 0rem 1.1rem;
+      padding: 0rem 0.5rem !important;
     }
     .brand {
       font-size: 3rem;

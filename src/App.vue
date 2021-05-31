@@ -17,6 +17,6 @@ export default class Home extends Vue {}
 
 <style lang="scss">
 #app {
-  padding-bottom: 5rem;
+  padding-bottom: 3rem;
 }
 </style>
