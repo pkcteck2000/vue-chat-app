@@ -111,7 +111,7 @@ export default class ChatApp extends Vue {
         margin-left: 0.5rem;
         margin-top: 1rem;
         padding: 0.2rem 1rem 0.2rem 1rem;
-        background: rgb(206, 219, 243);
+        background: rgb(212, 223, 245);
         border-radius: 1rem;
         color: rgb(50, 4, 95);
       }
@@ -124,7 +124,7 @@ export default class ChatApp extends Vue {
       }
       p {
         margin-right: 0.5rem;
-        background: rgb(206, 219, 243);
+        background: rgb(215, 243, 206);
         order: 1;
       }
     }
