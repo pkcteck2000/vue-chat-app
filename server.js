@@ -1,48 +1,77 @@
-// Use the web-push library to hide the implementation details of the communication
-// between the application server and the push service.
-// For details, see https://tools.ietf.org/html/draft-ietf-webpush-protocol and
-// https://tools.ietf.org/html/draft-ietf-webpush-encryption.
-const webPush = require('web-push');
+const webpush = require('web-push');
+const express = require('express');
+const bodyParser = require('body-parser');
+const path = require('path');
+const app = express();
+app.use(bodyParser.json());
+app.use(express.static(path.join(__dirname, 'client')));
+const publicVapidKey = 'BBziSIuVY4aLHLgXuRbgYfy7v4JsM367L9LO4kbz2RhH3B3hMoI8FB_W3C2-RzBUoipgD-EhvlFPbQEr7tY8Q6w';
+const privateVapidKey = 'oHfTLhPvj86VMz2gf-ZJ2c28GIRevokglDkqQ0SFFi4';
+// webPush.setVapidDetails('mailto:test@example.com', publicVapidKey, privateVapidKey);
 
-if (!process.env.VAPID_PUBLIC_KEY || !process.env.VAPID_PRIVATE_KEY) {
-    console.log("You must set the VAPID_PUBLIC_KEY and VAPID_PRIVATE_KEY " +
-        "environment variables. You can use the following ones:");
-    console.log(webPush.generateVAPIDKeys());
-    return;
+const sub = [{
+    "endpoint": "https://fcm.googleapis.com/fcm/send/fy4rmFNq54Q:APA91bHzaj2jiCZgCFC-zr-K5oxRzfq2YaZC6dPvXlUtlNmE-Qvf1NezewxorNIPt3OIdZvITykvYc5Kx3S_U5Lf0zLQmkLWe4fK0_dsaCEshVI5XRNnkeV-p49FSpW7cW9coy2LVJbA",
+    "expirationTime": null,
+    "keys": {
+        "p256dh": "BBAkKUSpfQKbuRFbK2uhQbm1o0gA4hi9eILLN_xxJCVYfrXgYh2DHATPF65mVfCg4VHPDorAgFT0BQFILUulXwk",
+        "auth": "AI7aWVYBMxeMUfEOn9pZfQ"
+    }
+}, ]
+
+app.get('/', (req, res) => {
+    return res.status(201).json({
+        response: 'Success'
+    });
+})
+
+app.post('/subscribe', (req, res) => {
+    console.log(req.body);
+    const subscription = req.body
+    const myPromise = new Promise(function (myResolve, myReject) {
+        sub.forEach(s => {
+            if (s.keys.auth === subscription.keys.auth) {
+                myReject();
+            }
+        })
+        myResolve()
+    });
+
+    myPromise.then(
+        function () {
+            sub.push(subscription)
+            return res.status(201).json({
+                response: 'Success'
+            });
+        },
+        function () {
+            return res.status(201).json({
+                response: 'Already Exists'
+            });
+        }
+    );
+})
+
+const payLoad = {
+    notification: {
+        body: 'Hello',
+        icon: 'https://m.media-amazon.com/images/I/71oMHcNQ7aL._AC_SS450_.jpg',
+        vibrate: [200, 100, 200, 100, 200, 100, 200],
+        open_url: 'https://vue-practice-68b47.web.app'
+    },
 }
-// Set the keys used for encrypting the push messages.
-webPush.setVapidDetails(
-    'https://serviceworke.rs/',
-    'BHVDNALIPgWSL76zRJevtJ0GQybgXNRkTpfUR0DAV2PyscaNqMZMWcGOLXYmfMcTBd1D6bXFKFfF0iDJSU2gN-4',
-    'sjq6eXdqPrBbot2uOSro50Xc_2YpLK4WpPUgcSLiv6o'
-);
 
-module.exports = function (app, route) {
-    app.get(route + 'vapidPublicKey', function (req, res) {
-        res.send('BHVDNALIPgWSL76zRJevtJ0GQybgXNRkTpfUR0DAV2PyscaNqMZMWcGOLXYmfMcTBd1D6bXFKFfF0iDJSU2gN-4');
-    });
 
-    app.post(route + 'register', function (req, res) {
-        // A real world application would store the subscription info.
-        res.sendStatus(201);
-    });
+webpush.setVapidDetails('mailto:example@yourdomain.org', publicVapidKey, privateVapidKey);
+setInterval(() => {
+    sub.forEach(s => {
+        webpush.sendNotification(
+            s,
+            JSON.stringify(payLoad)
+        )
+    })
+}, 5000);
 
-    app.post(route + 'sendNotification', function (req, res) {
-        const subscription = req.body.subscription;
-        const payload = req.body.payload;
-        const options = {
-            TTL: req.body.ttl
-        };
-
-        setTimeout(function () {
-            webPush.sendNotification(subscription, payload, options)
-                .then(function () {
-                    res.sendStatus(201);
-                })
-                .catch(function (error) {
-                    console.log(error);
-                    res.sendStatus(500);
-                });
-        }, req.body.delay * 1000);
-    });
-};
+app.set('port', process.env.PORT || 5000);
+const server = app.listen(app.get('port'), () => {
+    console.log(`Express running → PORT ${server.address().port}`);
+});
