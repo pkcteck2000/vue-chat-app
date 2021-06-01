@@ -155,4 +155,3 @@ export default class ChatApp extends Vue {
   }
 }
 </style>
-
