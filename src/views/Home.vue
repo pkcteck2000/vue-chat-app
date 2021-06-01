@@ -1,6 +1,6 @@
 <template>
   <div class="all-news-list">
-    <span class="header-text">All News</span>
+    <span class="header-text">All Newsas</span>
     <div class="mt-4"><top-news /></div>
   </div>
 </template>

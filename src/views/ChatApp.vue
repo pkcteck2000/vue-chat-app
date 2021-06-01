@@ -74,7 +74,6 @@ export default class ChatApp extends Vue {
       0,
       document.body.scrollHeight || document.documentElement.scrollHeight
     );
-    console.log("lopp");
   }
 }
 </script>

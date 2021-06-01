@@ -1,26 +1,23 @@
 const webpush = require('web-push');
 const express = require('express');
 const bodyParser = require('body-parser');
+var cors = require('cors')
 const path = require('path');
 const app = express();
 app.use(bodyParser.json());
 app.use(express.static(path.join(__dirname, 'client')));
 const publicVapidKey = 'BBziSIuVY4aLHLgXuRbgYfy7v4JsM367L9LO4kbz2RhH3B3hMoI8FB_W3C2-RzBUoipgD-EhvlFPbQEr7tY8Q6w';
 const privateVapidKey = 'oHfTLhPvj86VMz2gf-ZJ2c28GIRevokglDkqQ0SFFi4';
-// webPush.setVapidDetails('mailto:test@example.com', publicVapidKey, privateVapidKey);
 
-const sub = [{
-    "endpoint": "https://fcm.googleapis.com/fcm/send/fy4rmFNq54Q:APA91bHzaj2jiCZgCFC-zr-K5oxRzfq2YaZC6dPvXlUtlNmE-Qvf1NezewxorNIPt3OIdZvITykvYc5Kx3S_U5Lf0zLQmkLWe4fK0_dsaCEshVI5XRNnkeV-p49FSpW7cW9coy2LVJbA",
-    "expirationTime": null,
-    "keys": {
-        "p256dh": "BBAkKUSpfQKbuRFbK2uhQbm1o0gA4hi9eILLN_xxJCVYfrXgYh2DHATPF65mVfCg4VHPDorAgFT0BQFILUulXwk",
-        "auth": "AI7aWVYBMxeMUfEOn9pZfQ"
-    }
-}, ]
+const sub = []
 
-app.get('/', (req, res) => {
+app.use(cors())
+
+app.get('/subscribe', cors(), (req, res) => {
+    console.log('Hello');
     return res.status(201).json({
-        response: 'Success'
+        response: 'Success',
+        data: sub
     });
 })
 
@@ -60,16 +57,20 @@ const payLoad = {
     },
 }
 
-
 webpush.setVapidDetails('mailto:example@yourdomain.org', publicVapidKey, privateVapidKey);
+
 setInterval(() => {
-    sub.forEach(s => {
-        webpush.sendNotification(
-            s,
-            JSON.stringify(payLoad)
-        )
-    })
+    console.log(sub.length);
+    if (sub.length > 0) {
+        sub.forEach(s => {
+            webpush.sendNotification(
+                s,
+                JSON.stringify(payLoad)
+            )
+        })
+    }
 }, 5000);
+
 
 app.set('port', process.env.PORT || 5000);
 const server = app.listen(app.get('port'), () => {
